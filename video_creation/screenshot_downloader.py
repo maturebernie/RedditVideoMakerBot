@@ -83,7 +83,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         print_substep("Launching Headless Browser...")
 
         browser = p.chromium.launch(
-            headless=True
+            headless=False
         )  # headless=False will show the browser for debugging purposes
         # Device scale factor (or dsf for short) allows us to increase the resolution of the screenshots
         # When the dsf is 1, the width of the screenshot is 600 pixels
@@ -101,9 +101,12 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
 
         context.add_cookies(cookies)  # load preference cookies
 
+        
         # Login to Reddit
         print_substep("Logging in to Reddit...")
         page = context.new_page()
+        page.set_default_timeout(0)
+        page.set_default_navigation_timeout(0)
         page.goto("https://www.reddit.com/login", timeout=0)
         page.set_viewport_size(ViewportSize(width=1920, height=1080))
         page.wait_for_load_state()
@@ -147,6 +150,7 @@ def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
         page.wait_for_load_state()
         page.wait_for_timeout(5000)
 
+        #document.querySelector("#t3_15ixm6x > div > div._3xX726aBn29LDbsDtzr_6E._1Ap4F5maDtT1E1YuCiaO0r.D3IL3FD0RFy_mkKLPwL4") 在网页console上是这样查询的，复制的是js path
         if page.locator(
             "#t3_12hmbug > div > div._3xX726aBn29LDbsDtzr_6E._1Ap4F5maDtT1E1YuCiaO0r.D3IL3FD0RFy_mkKLPwL4 > div > div > button"
         ).is_visible():
