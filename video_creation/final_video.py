@@ -42,12 +42,17 @@ class ProgressFfmpeg(threading.Thread):
 
     def get_latest_ms_progress(self):
         lines = self.output_file.readlines()
+        print("lines")
+        print(self.output_file.name)
 
         if lines:
             for line in lines:
                 if "out_time_ms" in line:
-                    out_time_ms = line.split("=")[1]
-                    return int(out_time_ms) / 1000000.0
+                    out_time_ms = line.split("=")[1].strip()
+                    if out_time_ms != "N/A":
+                        return int(out_time_ms) / 1000000.0
+                    else:
+                        return 0
         return None
 
     def stop(self):
@@ -87,8 +92,12 @@ def prepare_background(reddit_id: str, W: int, H: int) -> str:
             output_path,
             an=None,
             **{
-                "c:v": "h264",
-                "b:v": "20M",
+                # 原来的配置
+                # "c:v": "h264",
+                # "b:v": "20M",
+                # "b:a": "192k",
+                "c:v": "libx264",  # 更改为libx264以使用更高质量的视频编码器
+                "b:v": "20M",      # 增加输出视频的比特率
                 "b:a": "192k",
                 "threads": multiprocessing.cpu_count(),
             },
@@ -209,7 +218,13 @@ def make_final_video(
 
     console.log(f"[bold green] Video Will Be: {length} Seconds Long")
 
-    screenshot_width = int((W * 45) // 100)
+    # bigrayray 这里原来是45，图片总是超出去，不知道为啥，所以换成25先
+    # screenshot_width = int((W * 45) // 100) 
+    print("Width")
+    print(W)
+    screenshot_width = int((W * 99) // 100)
+
+
     audio = ffmpeg.input(f"assets/temp/{reddit_id}/audio.mp3")
     final_audio = merge_background_audio(audio, reddit_id)
 

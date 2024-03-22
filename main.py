@@ -46,17 +46,81 @@ checkversion(__VERSION__)
 
 def main(POST_ID=None) -> None:
     global redditid, reddit_object
-    reddit_object = get_subreddit_threads(POST_ID)
+    reddit_object = {
+        "thread_url": "https://reddit.com/r/test/abcdef",
+        "thread_title": "i love ray",
+        "thread_id": "abcdef",
+        "is_nsfw": False,
+        "comments": [
+            {
+                "comment_body": "我爱你",
+                "comment_url": "https://reddit.com/r/test/abcdef/comment/123456",
+                "comment_id": "123456"
+            },
+            {
+                "comment_body": "我想你了，小伯尼",
+                "comment_url": "https://reddit.com/r/test/abcdef/comment/234567",
+                "comment_id": "234567"
+            },
+            {
+                "comment_body": "Nice job on this post!",
+                "comment_url": "https://reddit.com/r/test/abcdef/comment/345678",
+                "comment_id": "345678"
+            },
+            {
+                "comment_body": "This thread made my day!",
+                "comment_url": "https://reddit.com/r/test/abcdef/comment/456789",
+                "comment_id": "456789"
+            },
+            {
+                "comment_body": "I'm loving the positivity here!",
+                "comment_url": "https://reddit.com/r/test/abcdef/comment/567890",
+                "comment_id": "567890"
+            },
+            {
+                "comment_body": "Keep up the good work, everyone!",
+                "comment_url": "https://reddit.com/r/test/abcdef/comment/678901",
+                "comment_id": "678901"
+            },
+            {
+                "comment_body": "Ray is the best!",
+                "comment_url": "https://reddit.com/r/test/abcdef/comment/789012",
+                "comment_id": "789012"
+            },
+            {
+                "comment_body": "I love participating in this community!",
+                "comment_url": "https://reddit.com/r/test/abcdef/comment/890123",
+                "comment_id": "890123"
+            },
+            {
+                "comment_body": "Great thread, keep it up!",
+                "comment_url": "https://reddit.com/r/test/abcdef/comment/901234",
+                "comment_id": "901234"
+            },
+            {
+                "comment_body": "This thread deserves more upvotes!",
+                "comment_url": "https://reddit.com/r/test/abcdef/comment/012345",
+                "comment_id": "012345"
+            }
+        ]
+    }
+
+    # reddit_object = get_subreddit_threads(POST_ID)
+
     redditid = id(reddit_object)
+
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
-    get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
+    number_of_comments = number_of_comments + 1
+    # length = 29
+    # number_of_comments = 10
+    # get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = {
         "video": get_background_config("video"),
         "audio": get_background_config("audio"),
     }
-    download_background_video(bg_config["video"])
-    download_background_audio(bg_config["audio"])
+    # download_background_video(bg_config["video"])
+    # download_background_audio(bg_config["audio"])
     chop_background(bg_config, length, reddit_object)
     make_final_video(number_of_comments, length, reddit_object, bg_config)
 

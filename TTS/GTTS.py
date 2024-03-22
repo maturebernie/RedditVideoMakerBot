@@ -11,12 +11,15 @@ class GTTS:
         self.voices = []
 
     def run(self, text, filepath):
+        # bigrayray 修改口音和发音在这里，如果要修改发音程序就要用 [settings.tts] voice_choice，目前调通的是google translate
         tts = gTTS(
             text=text,
-            lang=settings.config["reddit"]["thread"]["post_lang"] or "en",
+            lang=settings.config["reddit"]["thread"]["post_lang"] or "zh-CN",
             slow=False,
         )
         tts.save(filepath)
 
     def randomvoice(self):
         return random.choice(self.voices)
+        
+
