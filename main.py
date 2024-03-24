@@ -49,67 +49,67 @@ def main(POST_ID=None) -> None:
     reddit_object = {
         "thread_url": "https://www.quora.com/How-can-I-copy-a-whole-webpage-all-of-the-code",
         "thread_title": "中国火锅好吃吗",
-        "thread_title_en": "Is chinese good?",
+        "thread_title_en": "Is Chinese hot pot delicious?",
         "thread_id": "abcdef",
         "is_nsfw": False,
         "comments": [
             {
-                "comment_body": "韩国网友：火锅是我们发明的",
-                "comment_body_en": "Hotpot is something we Koreans invented.",
+                "comment_body": "韩国网友：火锅起源于韩国",
+                "comment_body_en": "Hotpot originates from Korea",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/123456",
                 "comment_id": "123456"
             },
             {
-                "comment_body": "英国网友：这给我的感觉就是特别辣",
-                "comment_body_en": "To me, this feels especially spicy.",
+                "comment_body": "美国网友：中国的东西都不安全，食品和华为一样都不安全",
+                "comment_body_en": "Chinese things are not safe, both food and Huawei are unsafe",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/234567",
                 "comment_id": "234567"
             },
             {
-                "comment_body": "预测式外呼针对任务中已分配名单进行外呼，并不针对未分配名单。",
-                "comment_body_en": "Predictive dialing makes outbound calls to lists already assigned to tasks, not unassigned lists.",
+                "comment_body": "日本网友：中国火锅太辣了，我受不了",
+                "comment_body_en": "Chinese hot pot is too spicy, I can't handle it",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/345678",
                 "comment_id": "345678"
             },
             {
-                "comment_body": "支持配置并发数量（业内大概是接通率30%的情况下,1坐席配2.5-3并发）",
-                "comment_body_en": "Concurrency can be configured, with roughly 1 agent handling 2.5-3 concurrent calls at a 30% connection rate.",
+                "comment_body": "印度网友：中国火锅吃起来很糟糕，我宁愿吃印度咖喱",
+                "comment_body_en": "Chinese hot pot tastes awful, I prefer Indian curry",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/456789",
                 "comment_id": "456789"
             },
             {
-                "comment_body": "支持配置空闲时间，即当前通话结束后可设置",
-                "comment_body_en": "Support for configuring idle time, allowing it to be set after the current call ends.",
+                "comment_body": "俄罗斯网友：中国火锅是我生活中最美味的一部分",
+                "comment_body_en": "Chinese hot pot is the most delicious part of my life",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/567890",
                 "comment_id": "567890"
             },
             {
-                "comment_body": "Keep up the good work, everyone!",
-                "comment_body_en": "Great job, everyone!",
+                "comment_body": "法国网友：中国火锅是我最喜欢的食物之一，特别是辣的",
+                "comment_body_en": "Chinese hot pot is one of my favorite foods, especially the spicy ones",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/678901",
                 "comment_id": "678901"
             },
             {
-                "comment_body": "Ray is the best!",
-                "comment_body_en": "Ray is awesome!",
+                "comment_body": "英国网友：中国火锅味道独特，是我在中国最喜欢的菜之一",
+                "comment_body_en": "Chinese hot pot has a unique flavor, it's one of my favorite dishes in China",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/789012",
                 "comment_id": "789012"
             },
             {
-                "comment_body": "I love participating in this community!",
-                "comment_body_en": "I enjoy being part of this community!",
+                "comment_body": "新加坡网友：中国火锅太辣了，我更喜欢清淡的食物",
+                "comment_body_en": "Chinese hot pot is too spicy, I prefer milder food",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/890123",
                 "comment_id": "890123"
             },
             {
-                "comment_body": "Great thread, keep it up!",
-                "comment_body_en": "This thread is fantastic, keep it going!",
+                "comment_body": "澳大利亚网友：中国火锅是我生活中不可或缺的一部分，每周至少吃一次",
+                "comment_body_en": "Chinese hot pot is an indispensable part of my life, I eat it at least once a week",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/901234",
                 "comment_id": "901234"
             },
             {
-                "comment_body": "This thread deserves more upvotes!",
-                "comment_body_en": "This thread deserves more upvotes!",
+                "comment_body": "加拿大网友：中国火锅是我最喜欢的食物之一，尤其是冬天",
+                "comment_body_en": "Chinese hot pot is one of my favorite foods, especially in winter",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/012345",
                 "comment_id": "012345"
             }
@@ -125,7 +125,7 @@ def main(POST_ID=None) -> None:
     length = math.ceil(length)
     # length = 29
     # number_of_comments = 9
-    # take_screenshot_ray(reddit_object)
+    take_screenshot_ray(reddit_object)
     # get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = {
         "video": get_background_config("video"),
@@ -133,8 +133,8 @@ def main(POST_ID=None) -> None:
     }
     # download_background_video(bg_config["video"])
     # download_background_audio(bg_config["audio"])
-    # chop_background(bg_config, length, reddit_object)
-    # make_final_video(number_of_comments, length, reddit_object, bg_config)
+    chop_background(bg_config, length, reddit_object)
+    make_final_video(number_of_comments, length, reddit_object, bg_config)
     after_final_video(reddit_object, bg_config)
 
 

@@ -68,6 +68,19 @@ class ProgressFfmpeg(threading.Thread):
         self.stop()
 
 
+def wrap_text(text, fontSize, max_width):
+    lines = []
+    line = ''
+    for word in text.split():
+        if fontSize <= max_width:
+            line += (word + ' ')
+        else:
+            lines.append(line)
+            line = word + ' '
+    lines.append(line)
+    return '\n'.join(lines)
+
+
 def name_normalize(name: str) -> str:
     name = re.sub(r'[?\\"%*:|<>]', "", name)
     name = re.sub(r"( [w,W]\s?\/\s?[o,O,0])", r" without", name)
@@ -396,11 +409,13 @@ def make_final_video(
                 y="(main_h-overlay_h-100)",
             )
 
+            fontSize = 96
             comment_body = reddit_obj['thread_title_en'] if i == 0 else reddit_obj["comments"][i - 1]["comment_body"]
+            max_text_width = main_w - 50  # 假设文字距离视频边界有一定的间距
             background_clip = background_clip.drawtext(
-                text=comment_body,
+                text=wrap_text(comment_body, fontSize, max_text_width),
                 fontfile=os.path.join("fonts", "A-站酷仓耳渔阳体-700-W05.ttf"),
-                fontsize=96,
+                fontsize=fontSize,
                 fontcolor="yellow",  # 设置字体颜色为黄色
                 box=1,  # 启用字体边框
                 boxcolor="black",  # 设置字体边框颜色为黑色

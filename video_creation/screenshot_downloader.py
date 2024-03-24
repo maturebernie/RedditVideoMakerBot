@@ -71,11 +71,11 @@ def take_screenshot_ray(reddit_object):
 
 
         # 为了加载更多内容，模拟滚动到页面底部
-        # for _ in range(1):
-        #     print("滚动到页面底部...")
-        #     page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-        #     print("等待5秒...")
-        #     page.wait_for_timeout(15000)  # 等待5秒
+        for _ in range(1):
+            print("滚动到页面底部...")
+            page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+            print("等待5秒...")
+            page.wait_for_timeout(15000)  # 等待5秒
 
 
 
@@ -120,10 +120,11 @@ def take_screenshot_ray(reddit_object):
                     console.log(commentElement)
                     if (commentElement) {{
                         // Remove existing content
-                        commentElement.innerHTML = '{comment_body_en}';
+                        commentElement.innerHTML = `{comment_body_en}`;
                     }}
                 }}
             """)
+
 
 
             # page.wait_for_timeout(500)  # 等待5秒
