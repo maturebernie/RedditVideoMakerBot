@@ -156,13 +156,43 @@ def after_final_video(
 
     defaultPath = f"results/{subreddit}"
     path = defaultPath + f"/{filename}"
-    input_file = (
+    original_file = (
         path[:251] + ".mp4"
+    )
+    input_file = (
+        path[:251] + "_music.mp4"
     )  # Prevent a error by limiting the path length, do not change this.
     # 使用 FFmpeg 调整视频分辨率为 1080x1920，并保持宽高比不变
+
+
+    # 随机选择一个音频文件
+    music_folder = "music"
+    music_files = [os.path.join(music_folder, file) for file in os.listdir(music_folder) if file.lower().endswith(".mp3")]
+    selected_music = random.choice(music_files)
+
+    # 获取视频文件的持续时间
+    probe = ffmpeg.probe(original_file)
+    video_info = next(stream for stream in probe["streams"] if stream["codec_type"] == "video")
+    duration = float(video_info["duration"])
+
+    # 定义 FFmpeg 命令
+    input_stream = ffmpeg.input(original_file)
+    audio_stream = ffmpeg.input(selected_music, t=duration)  # 使用音频文件的持续时间与视频流匹配
+    output_stream = ffmpeg.output(input_stream.video, audio_stream.audio, input_file)
+
+    # 设置覆盖选项
+    output_stream = output_stream.overwrite_output()
+
+    # 运行 FFmpeg 命令
+    ffmpeg.run(output_stream)
+
+
     output_file = (
         path[:251] + "_output.mp4"
     )
+
+
+
 
     # 使用ffmpeg.probe获取视频文件信息
     probe = ffmpeg.probe(input_file)
