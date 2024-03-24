@@ -20,8 +20,8 @@ from video_creation.background import (
     chop_background,
     get_background_config,
 )
-from video_creation.final_video import make_final_video
-from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts
+from video_creation.final_video import make_final_video, after_final_video
+from video_creation.screenshot_downloader import get_screenshots_of_reddit_posts,take_screenshot_ray
 from video_creation.voices import save_text_to_mp3
 from utils.ffmpeg_install import ffmpeg_install
 
@@ -47,63 +47,75 @@ checkversion(__VERSION__)
 def main(POST_ID=None) -> None:
     global redditid, reddit_object
     reddit_object = {
-        "thread_url": "https://reddit.com/r/test/abcdef",
-        "thread_title": "i love ray",
+        "thread_url": "https://www.quora.com/How-can-I-copy-a-whole-webpage-all-of-the-code",
+        "thread_title": "中国火锅好吃吗",
+        "thread_title_en": "Is chinese good?",
         "thread_id": "abcdef",
         "is_nsfw": False,
         "comments": [
             {
-                "comment_body": "我爱你",
+                "comment_body": "韩国网友：火锅是我们发明的",
+                "comment_body_en": "Hotpot is something we Koreans invented.",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/123456",
                 "comment_id": "123456"
             },
             {
-                "comment_body": "我想你了，小伯尼",
+                "comment_body": "英国网友：这给我的感觉就是特别辣",
+                "comment_body_en": "To me, this feels especially spicy.",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/234567",
                 "comment_id": "234567"
             },
             {
-                "comment_body": "Nice job on this post!",
+                "comment_body": "预测式外呼针对任务中已分配名单进行外呼，并不针对未分配名单。",
+                "comment_body_en": "Predictive dialing makes outbound calls to lists already assigned to tasks, not unassigned lists.",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/345678",
                 "comment_id": "345678"
             },
             {
-                "comment_body": "This thread made my day!",
+                "comment_body": "支持配置并发数量（业内大概是接通率30%的情况下,1坐席配2.5-3并发）",
+                "comment_body_en": "Concurrency can be configured, with roughly 1 agent handling 2.5-3 concurrent calls at a 30% connection rate.",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/456789",
                 "comment_id": "456789"
             },
             {
-                "comment_body": "I'm loving the positivity here!",
+                "comment_body": "支持配置空闲时间，即当前通话结束后可设置",
+                "comment_body_en": "Support for configuring idle time, allowing it to be set after the current call ends.",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/567890",
                 "comment_id": "567890"
             },
             {
                 "comment_body": "Keep up the good work, everyone!",
+                "comment_body_en": "Great job, everyone!",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/678901",
                 "comment_id": "678901"
             },
             {
                 "comment_body": "Ray is the best!",
+                "comment_body_en": "Ray is awesome!",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/789012",
                 "comment_id": "789012"
             },
             {
                 "comment_body": "I love participating in this community!",
+                "comment_body_en": "I enjoy being part of this community!",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/890123",
                 "comment_id": "890123"
             },
             {
                 "comment_body": "Great thread, keep it up!",
+                "comment_body_en": "This thread is fantastic, keep it going!",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/901234",
                 "comment_id": "901234"
             },
             {
                 "comment_body": "This thread deserves more upvotes!",
+                "comment_body_en": "This thread deserves more upvotes!",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/012345",
                 "comment_id": "012345"
             }
         ]
     }
+
 
     # reddit_object = get_subreddit_threads(POST_ID)
 
@@ -111,9 +123,9 @@ def main(POST_ID=None) -> None:
 
     length, number_of_comments = save_text_to_mp3(reddit_object)
     length = math.ceil(length)
-    number_of_comments = number_of_comments + 1
     # length = 29
-    # number_of_comments = 10
+    # number_of_comments = 9
+    take_screenshot_ray(reddit_object)
     # get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = {
         "video": get_background_config("video"),
@@ -123,6 +135,7 @@ def main(POST_ID=None) -> None:
     # download_background_audio(bg_config["audio"])
     chop_background(bg_config, length, reddit_object)
     make_final_video(number_of_comments, length, reddit_object, bg_config)
+    after_final_video(reddit_object, bg_config)
 
 
 def run_many(times) -> None:

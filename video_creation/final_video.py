@@ -20,6 +20,8 @@ from utils import settings
 import tempfile
 import threading
 import time
+import random
+import string
 
 console = Console()
 
@@ -42,8 +44,8 @@ class ProgressFfmpeg(threading.Thread):
 
     def get_latest_ms_progress(self):
         lines = self.output_file.readlines()
-        print("lines")
-        print(self.output_file.name)
+        # print("lines")
+        # print(self.output_file.name)
 
         if lines:
             for line in lines:
@@ -132,6 +134,64 @@ def merge_background_audio(audio: ffmpeg, reddit_id: str):
         # Merges audio and background_audio
         merged_audio = ffmpeg.filter([audio, bg_audio], "amix", duration="longest")
         return merged_audio  # Return merged audio
+
+# 定义一个函数来生成随机中文文本
+def generate_random_chinese(length):
+    result = ''
+    for _ in range(length):
+        result += random.choice(string.ascii_letters + string.digits + '，。！？：；、')
+    return result
+
+
+def after_final_video(
+    reddit_obj: dict,
+    background_config: Dict[str, Tuple],
+):
+    subreddit = settings.config["reddit"]["thread"]["subreddit"]
+    title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
+    idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
+    title_thumb = reddit_obj["thread_title"]
+
+    filename = f"{name_normalize(title)[:251]}"
+
+    defaultPath = f"results/{subreddit}"
+    path = defaultPath + f"/{filename}"
+    input_file = (
+        path[:251] + ".mp4"
+    )  # Prevent a error by limiting the path length, do not change this.
+    # 使用 FFmpeg 调整视频分辨率为 1080x1920，并保持宽高比不变
+    output_file = (
+        path[:251] + "_output.mp4"
+    )
+
+    # 使用ffmpeg.probe获取视频文件信息
+    probe = ffmpeg.probe(input_file)
+
+    # 从probe结果中提取视频流的宽度和高度
+    video_info = next(stream for stream in probe['streams'] if stream['codec_type'] == 'video')
+    width = int(video_info['width'])
+    height = int(video_info['height'])
+
+    print("视频宽度:", width)
+    print("视频高度:", height)
+
+    converted_width = height
+    converted_height = width
+
+    ffmpeg.input(
+        input_file
+    ).output(
+        output_file,
+        vf=f"split[a][b];[a]scale={converted_width}:{converted_height},boxblur=20:5[1];[b]scale={converted_width}:ih*{converted_width}/iw[2];[1][2]overlay=4:(H-h)/2",
+        vcodec="libx264",
+        acodec="aac",
+        crf=18,
+        preset="veryfast",
+        aspect="9:16",
+        f="mp4"
+    ).run(overwrite_output=True)
+
+    # # ffmpeg.input(input_file).output(output_file, vf="scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2,setsar=1,boxblur=10", vcodec="libx264", acodec="aac").run(overwrite_output=True)
 
 
 def make_final_video(
@@ -288,18 +348,40 @@ def make_final_video(
     else:
         for i in range(0, number_of_clips + 1):
             image_clips.append(
-                ffmpeg.input(f"assets/temp/{reddit_id}/png/comment_{i}.png")[
-                    "v"
-                ].filter("scale", screenshot_width, -1)
+                ffmpeg.input(f"assets/temp/{reddit_id}/png/comment_{i}.png")["v"]
+                .filter("scale", screenshot_width, -1)
+                # .filter("zoompan", zoom="if(lte(zoom,1.0),1.5,max(1.5,zoom))", x="(iw-ow)/2", y="(ih-oh)/2", d="1", fps="30")
             )
             image_overlay = image_clips[i].filter("colorchannelmixer", aa=opacity)
+            # background_clip = background_clip.overlay(
+            #     image_overlay,
+            #     enable=f"between(t,{current_time},{current_time + audio_clips_durations[i]})",
+            #     x="(main_w-overlay_w)/2",
+            #     y="(main_h-overlay_h)/2",
+            # )
             background_clip = background_clip.overlay(
                 image_overlay,
                 enable=f"between(t,{current_time},{current_time + audio_clips_durations[i]})",
                 x="(main_w-overlay_w)/2",
-                y="(main_h-overlay_h)/2",
+                y="(main_h-overlay_h-100)",
+            )
+
+            comment_body = reddit_obj['thread_title'] if i == 0 else reddit_obj["comments"][i - 1]["comment_body"]
+            background_clip = background_clip.drawtext(
+                text=comment_body,
+                fontfile=os.path.join("fonts", "A-站酷仓耳渔阳体-700-W05.ttf"),
+                fontsize=96,
+                fontcolor="yellow",  # 设置字体颜色为黄色
+                box=1,  # 启用字体边框
+                boxcolor="black",  # 设置字体边框颜色为黑色
+                boxborderw=5,  # 设置字体边框宽度
+                x="(main_w-text_w)/2",
+                y="(main_h-text_h)",
+                enable=f"between(t,{current_time},{current_time + audio_clips_durations[i]})"
             )
             current_time += audio_clips_durations[i]
+
+
 
     title = re.sub(r"[^\w\s-]", "", reddit_obj["thread_title"])
     idx = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
@@ -364,13 +446,58 @@ def make_final_video(
     text = f"Background by {background_config['video'][2]}"
     background_clip = ffmpeg.drawtext(
         background_clip,
-        text=text,
-        x=f"(w-text_w)",
-        y=f"(h-text_h)",
-        fontsize=5,
+        text='老外看中国',
+        x="(w-text_w-100)",  # 将文本定位在右侧
+        y=100,  # 将文本定位在顶部
+        fontsize=100,
         fontcolor="White",
-        fontfile=os.path.join("fonts", "Roboto-Regular.ttf"),
+        fontfile=os.path.join("fonts", "A-站酷仓耳渔阳体-700-W05.ttf"),
     )
+
+
+    background_clip = ffmpeg.drawtext(
+        background_clip,
+        text=reddit_obj['thread_title'],
+        x=100,
+        y=100,
+        fontsize=100,
+        fontcolor="White",
+        fontfile=os.path.join("fonts", "A-站酷仓耳渔阳体-700-W05.ttf"),
+        # x=100,  # 调整x坐标以控制文字在左侧的位置
+        # y="(h-text_h)/2",  # 将文字垂直居中放置
+        # rotate=90,  # 将文字旋转90度以垂直显示
+    )
+
+    # 添加第二段文本
+    # background_clip = ffmpeg.drawtext(
+    #     background_clip,
+    #     text=reddit_obj['thread_title'],
+    #     # x=f"(w-text_w)",
+    #     # y=f"(h-text_h)",
+    #     fontsize=100,
+    #     fontcolor="White",
+    #     fontfile=os.path.join("fonts", "A-站酷仓耳渔阳体-700-W05.ttf"),
+    #     x=200,  # 调整x坐标以控制文字在左侧的位置
+    #     y="(h-text_h)/2",  # 将文字垂直居中放置
+    #     rotate=90,  # 将文字旋转90度以垂直显示
+    # )
+
+    # background_clip = ffmpeg.drawtext(
+    #     background_clip,
+    #     text=reddit_obj['thread_title'],
+    #     fontfile=os.path.join("fonts", "A-站酷仓耳渔阳体-700-W05.ttf"),
+    #     fontsize=96,
+    #     fontcolor="yellow",  # 设置字体颜色为黄色
+    #     box=1,  # 启用字体边框
+    #     boxcolor="black",  # 设置字体边框颜色为黑色
+    #     boxborderw=5,  # 设置字体边框宽度
+    #     x="20",
+    #     y="(main_h-text_h)*1/3",
+    #     enable=f"between(t,{current_time},{current_time + audio_clips_durations[i]})",
+    #     rotate=90,  # 将文本旋转90度以竖排显示
+    # )
+
+
     background_clip = background_clip.filter("scale", W, H)
     print_step("Rendering the video 🎥")
     from tqdm import tqdm

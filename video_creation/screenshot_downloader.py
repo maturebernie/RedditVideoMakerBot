@@ -14,8 +14,171 @@ from utils.imagenarator import imagemaker
 from utils.playwright import clear_cookie_by_name
 
 from utils.videos import save_data
+import random
+from PIL import Image
 
 __all__ = ["download_screenshots_of_reddit_posts"]
+
+
+
+def take_screenshot_ray(reddit_object):
+    # Define the URL and the text you want to replace
+    W: Final[int] = int(settings.config["settings"]["resolution_w"])
+    H: Final[int] = int(settings.config["settings"]["resolution_h"])
+    url = reddit_object["thread_url"]
+    replacement_text = reddit_object["thread_title_en"]
+
+    # Launch the browser (Playwright supports multiple browsers)
+    with sync_playwright() as p:
+        dsf = (W // 600) + 1
+
+        browser = p.chromium.launch(
+            # '/Users/macbook/Library/Application Support/Google/Chrome',
+            headless=False
+        ) 
+
+        context = browser.new_context(
+            locale="en-us",
+            # color_scheme="dark",
+            viewport=ViewportSize(width=W, height=H),
+            device_scale_factor=dsf,
+        )
+
+        page = context.new_page()
+        page.set_default_timeout(0)
+        page.set_default_navigation_timeout(0)
+
+        # Open the URL
+        page.goto(url)
+        page.set_viewport_size(ViewportSize(width=1920, height=1080))
+        page.wait_for_load_state()
+        page.wait_for_timeout(5000)  # 等待5秒
+
+        # Replace the specified CSS selector with reddit_object['thread_title']
+        page.evaluate(f"""
+            const element = document.querySelector("#mainContent > div.q-box.qu-borderAll.qu-borderRadius--small.qu-borderColor--raised.qu-boxShadow--small.qu-bg--raised > div > div > span > span > div > div > div > span");
+            element.innerText = '{reddit_object["thread_title"]}';
+        """)
+
+        print("now title screenshoting")
+
+        # Take a screenshot of the specific element (title)
+        element = page.query_selector("#mainContent > div.q-box.qu-borderAll.qu-borderRadius--small.qu-borderColor--raised.qu-boxShadow--small.qu-bg--raised > div")
+        reddit_id = reddit_object["thread_id"]
+        screenshot_path = f"assets/temp/{reddit_id}/png/title.png"
+        element.screenshot(path=screenshot_path)
+
+
+
+        # 为了加载更多内容，模拟滚动到页面底部
+        # for _ in range(1):
+        #     print("滚动到页面底部...")
+        #     page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+        #     print("等待5秒...")
+        #     page.wait_for_timeout(15000)  # 等待5秒
+
+
+
+        # 获取页面中所有包含 dom_annotate_question_answer_item_ 的元素
+        container_elements = page.query_selector_all('[class*=dom_annotate_question_answer_item_]')
+        print("找到的容器元素数量：", len(container_elements))
+
+        # for container in container_elements:
+        #     class_list = container.get_attribute('class').split()
+        #     print("容器元素类名：", class_list)
+
+        # 过滤只包含 .q-image 子元素的元素
+        q_image_containers = [container for container in container_elements if container.query_selector(".q-image")]
+        print("符合条件的容器元素数量：", len(q_image_containers))
+
+
+        for idx, comment in enumerate(reddit_object["comments"]):
+            print("正在截取评论 " )
+            print(idx)
+            comment_body_en = comment.get("comment_body_en", "")
+            
+            # 如果没有符合条件的容器元素，跳过该评论
+            if not q_image_containers:
+                print("没有符合条件的容器元素，跳过该评论")
+                continue
+            
+            # 随机选择一个容器元素
+            container_element = random.choice(q_image_containers)
+            class_list = container_element.get_attribute('class').split()
+            class_selector = '.' + ', .'.join(class_list)
+            print("容器元素类名：", class_selector)
+
+            # Assume you have a CSS class named "replaced-comment" defined in your external CSS file
+            # with the desired styles for the replaced content
+            # replaced_comment_class = 'replaced-comment'
+
+            page.evaluate(f"""
+                const containerElement = document.querySelector("{class_selector}");
+                if (containerElement) {{
+                    // Find the element containing the comment text
+                    const commentElement = containerElement.querySelector(".qu-userSelect--text");
+                    console.log(commentElement)
+                    if (commentElement) {{
+                        // Remove existing content
+                        commentElement.innerHTML = '{comment_body_en}';
+                    }}
+                }}
+            """)
+
+
+            # page.wait_for_timeout(500)  # 等待5秒
+            # 截取容器元素的屏幕截图
+            comment_screenshot_path = f"assets/temp/{reddit_id}/png/comment_title_{idx}.png"
+            print("正在截取评论的屏幕截图...")
+            container_element.query_selector(".spacing_log_answer_header").screenshot(path=comment_screenshot_path)
+
+
+            print("now title screenshoting")
+
+            # Take a screenshot of the specific element (title)
+            element = page.query_selector("#mainContent > div.q-box.qu-borderAll.qu-borderRadius--small.qu-borderColor--raised.qu-boxShadow--small.qu-bg--raised > div")
+            reddit_id = reddit_object["thread_id"]
+            screenshot_path = f"assets/temp/{reddit_id}/png/comment_content_{idx}.png"
+            element.screenshot(path=screenshot_path)
+            
+
+
+
+            # 打开两个截图文件
+            image1 = Image.open(f"assets/temp/{reddit_id}/png/comment_title_{idx}.png")
+            image2 = Image.open(f"assets/temp/{reddit_id}/png/comment_content_{idx}.png")
+
+            # 获取两个图片的尺寸
+            width1, height1 = image1.size
+            width2, height2 = image2.size
+
+            # 创建一个新的图片，宽度为两个图片宽度的最大值，高度为两个图片高度的总和
+            new_width = max(width1, width2)
+            new_height = height1 + height2
+            new_image = Image.new("RGB", (new_width, new_height), color="white")
+
+            # 将第一个图片粘贴到新图片的顶部
+            new_image.paste(image1, (0, 0))
+
+            # 将第二个图片粘贴到新图片的底部
+            new_image.paste(image2, (0, height1))
+
+            # 保存新图片
+            new_image_path = f"assets/temp/{reddit_id}/png/comment_{idx}.png"
+            new_image.save(new_image_path)
+
+            print("合并后的图片已保存为:", new_image_path)
+
+
+            print("完成！")
+
+
+
+
+        
+        # Close the browser
+        browser.close()
+
 
 
 def get_screenshots_of_reddit_posts(reddit_object: dict, screenshot_num: int):
