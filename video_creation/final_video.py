@@ -366,7 +366,7 @@ def make_final_video(
                 y="(main_h-overlay_h-100)",
             )
 
-            comment_body = reddit_obj['thread_title'] if i == 0 else reddit_obj["comments"][i - 1]["comment_body"]
+            comment_body = reddit_obj['thread_title_en'] if i == 0 else reddit_obj["comments"][i - 1]["comment_body"]
             background_clip = background_clip.drawtext(
                 text=comment_body,
                 fontfile=os.path.join("fonts", "A-站酷仓耳渔阳体-700-W05.ttf"),
