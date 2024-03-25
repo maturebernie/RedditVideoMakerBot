@@ -70,15 +70,22 @@ class ProgressFfmpeg(threading.Thread):
 
 def wrap_text(text, fontSize, max_width):
     lines = []
-    line = ''
-    for word in text.split():
-        if fontSize <= max_width:
-            line += (word + ' ')
+    current_line = ''
+    for char in text:
+        # 检查将当前字符添加到当前行是否会超过最大宽度
+        test_line = current_line + char
+        if len(test_line.encode('utf-8')) * fontSize / 2.5 <= max_width:
+            # 如果未超过最大宽度，将字符添加到当前行
+            current_line = test_line
         else:
-            lines.append(line)
-            line = word + ' '
-    lines.append(line)
+            # 如果超过了最大宽度，将当前行添加到行列表中，并开始新的一行
+            lines.append(current_line)
+            current_line = char
+    # 添加最后一行到行列表中
+    lines.append(current_line)
     return '\n'.join(lines)
+
+
 
 
 def name_normalize(name: str) -> str:
@@ -411,7 +418,7 @@ def make_final_video(
 
             fontSize = 96
             comment_body = reddit_obj['thread_title_en'] if i == 0 else reddit_obj["comments"][i - 1]["comment_body"]
-            max_text_width = main_w - 50  # 假设文字距离视频边界有一定的间距
+            max_text_width = W - 50  # 假设文字距离视频边界有一定的间距
             background_clip = background_clip.drawtext(
                 text=wrap_text(comment_body, fontSize, max_text_width),
                 fontfile=os.path.join("fonts", "A-站酷仓耳渔阳体-700-W05.ttf"),

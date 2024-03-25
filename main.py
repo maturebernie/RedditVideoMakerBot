@@ -125,7 +125,7 @@ def main(POST_ID=None) -> None:
     length = math.ceil(length)
     # length = 29
     # number_of_comments = 9
-    take_screenshot_ray(reddit_object)
+    # take_screenshot_ray(reddit_object)
     # get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = {
         "video": get_background_config("video"),
@@ -133,7 +133,7 @@ def main(POST_ID=None) -> None:
     }
     # download_background_video(bg_config["video"])
     # download_background_audio(bg_config["audio"])
-    chop_background(bg_config, length, reddit_object)
+    # chop_background(bg_config, length, reddit_object)
     make_final_video(number_of_comments, length, reddit_object, bg_config)
     after_final_video(reddit_object, bg_config)
 
