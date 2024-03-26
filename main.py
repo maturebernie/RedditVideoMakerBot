@@ -48,73 +48,88 @@ def main(POST_ID=None) -> None:
     global redditid, reddit_object
     reddit_object = {
         "thread_url": "https://www.quora.com/How-can-I-copy-a-whole-webpage-all-of-the-code",
-        "thread_title": "中国火锅好吃吗",
-        "thread_title_en": "Is Chinese hot pot delicious?",
+        "thread_title": "老外看中国：广州无人公交你敢坐吗？",
+        "thread_title_en": "Would you dare to take Guangzhou's driverless bus?",
         "thread_id": "abcdef",
         "is_nsfw": False,
         "comments": [
             {
-                "comment_body": "韩国网友：火锅起源于韩国",
-                "comment_body_en": "Hotpot originates from Korea",
-                "comment_url": "https://reddit.com/r/test/abcdef/comment/123456",
-                "comment_id": "123456"
-            },
-            {
-                "comment_body": "美国网友：中国的东西都不安全，食品和华为一样都不安全",
-                "comment_body_en": "Chinese things are not safe, both food and Huawei are unsafe",
+                "comment_body": "美国网友：我可不会轻易尝试，太危险了。",
+                "comment_body_en": "I wouldn't dare to try it, too dangerous.",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/234567",
                 "comment_id": "234567"
             },
             {
-                "comment_body": "日本网友：中国火锅太辣了，我受不了",
-                "comment_body_en": "Chinese hot pot is too spicy, I can't handle it",
+                "comment_body": "日本网友：这种技术我国早已拥有，不足为奇。",
+                "comment_body_en": "We already have this technology in our country, not surprising.",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/345678",
                 "comment_id": "345678"
             },
             {
-                "comment_body": "印度网友：中国火锅吃起来很糟糕，我宁愿吃印度咖喱",
-                "comment_body_en": "Chinese hot pot tastes awful, I prefer Indian curry",
+                "comment_body": "韩国网友：这是未来的交通方式，很安全。",
+                "comment_body_en": "This is the future of transportation, very safe.",
+                "comment_url": "https://reddit.com/r/test/abcdef/comment/123456",
+                "comment_id": "123456"
+            },
+            {
+                "comment_body": "印度网友：这对于发展中国家来说是一大进步。",
+                "comment_body_en": "This is a big step forward for developing countries like China.",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/456789",
                 "comment_id": "456789"
             },
             {
-                "comment_body": "俄罗斯网友：中国火锅是我生活中最美味的一部分",
-                "comment_body_en": "Chinese hot pot is the most delicious part of my life",
+                "comment_body": "俄罗斯网友：中国总是走在时代前列，值得尊敬。",
+                "comment_body_en": "China always leads the way in the era, worthy of respect.",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/567890",
                 "comment_id": "567890"
             },
             {
-                "comment_body": "法国网友：中国火锅是我最喜欢的食物之一，特别是辣的",
-                "comment_body_en": "Chinese hot pot is one of my favorite foods, especially the spicy ones",
+                "comment_body": "德国网友：这种创新性技术值得肯定。",
+                "comment_body_en": "This innovative technology deserves recognition.",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/678901",
                 "comment_id": "678901"
             },
             {
-                "comment_body": "英国网友：中国火锅味道独特，是我在中国最喜欢的菜之一",
-                "comment_body_en": "Chinese hot pot has a unique flavor, it's one of my favorite dishes in China",
+                "comment_body": "加拿大网友：我对这个概念感到很兴奋。",
+                "comment_body_en": "I'm excited about this concept.",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/789012",
                 "comment_id": "789012"
             },
             {
-                "comment_body": "新加坡网友：中国火锅太辣了，我更喜欢清淡的食物",
-                "comment_body_en": "Chinese hot pot is too spicy, I prefer milder food",
+                "comment_body": "澳大利亚网友：这对于环保是一大利好。",
+                "comment_body_en": "This is a big plus for the environment.",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/890123",
                 "comment_id": "890123"
             },
             {
-                "comment_body": "澳大利亚网友：中国火锅是我生活中不可或缺的一部分，每周至少吃一次",
-                "comment_body_en": "Chinese hot pot is an indispensable part of my life, I eat it at least once a week",
+                "comment_body": "巴西网友：这对于交通拥堵是一个解决方案。",
+                "comment_body_en": "This is a solution to traffic congestion.",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/901234",
                 "comment_id": "901234"
             },
             {
-                "comment_body": "加拿大网友：中国火锅是我最喜欢的食物之一，尤其是冬天",
-                "comment_body_en": "Chinese hot pot is one of my favorite foods, especially in winter",
+                "comment_body": "法国网友：这是未来的交通趋势。",
+                "comment_body_en": "This is the future trend of transportation.",
                 "comment_url": "https://reddit.com/r/test/abcdef/comment/012345",
                 "comment_id": "012345"
+            },
+            {
+                "comment_body": "新加坡网友：我觉得这很酷。",
+                "comment_body_en": "I think this is cool.",
+                "comment_url": "https://reddit.com/r/test/abcdef/comment/1234567",
+                "comment_id": "1234567"
+            },
+            {
+                "comment_body": "意大利网友：我很期待看到这个项目的发展。",
+                "comment_body_en": "I look forward to seeing the development of this project.",
+                "comment_url": "https://reddit.com/r/test/abcdef/comment/2345678",
+                "comment_id": "2345678"
             }
         ]
     }
+
+
+
 
 
     # reddit_object = get_subreddit_threads(POST_ID)
@@ -125,7 +140,7 @@ def main(POST_ID=None) -> None:
     length = math.ceil(length)
     # length = 29
     # number_of_comments = 9
-    # take_screenshot_ray(reddit_object)
+    take_screenshot_ray(reddit_object)
     # get_screenshots_of_reddit_posts(reddit_object, number_of_comments)
     bg_config = {
         "video": get_background_config("video"),
@@ -133,7 +148,7 @@ def main(POST_ID=None) -> None:
     }
     # download_background_video(bg_config["video"])
     # download_background_audio(bg_config["audio"])
-    # chop_background(bg_config, length, reddit_object)
+    chop_background(bg_config, length, reddit_object)
     make_final_video(number_of_comments, length, reddit_object, bg_config)
     after_final_video(reddit_object, bg_config)
 

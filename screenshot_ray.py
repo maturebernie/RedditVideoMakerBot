@@ -166,21 +166,41 @@ def take_screenshot(reddit_object):
             # with the desired styles for the replaced content
             # replaced_comment_class = 'replaced-comment'
 
+            # page.evaluate(f"""
+            #     const containerElement = document.querySelector("{class_selector}");
+            #     if (containerElement) {{
+            #         // Find the element containing the comment text
+            #         const commentElement = containerElement.querySelector(".qu-userSelect--text");
+            #         console.log(commentElement)
+            #         if (commentElement) {{
+            #             // Remove existing content
+            #             commentElement.innerHTML = '{comment_body_en}';
+            #         }}
+            #     }}
+            # """)
+
             page.evaluate(f"""
                 const containerElement = document.querySelector("{class_selector}");
                 if (containerElement) {{
                     // Find the element containing the comment text
-                    const commentElement = containerElement.querySelector(".qu-userSelect--text");
+                    const commentElement = containerElement.querySelector(".qu-wordBreak--break-word");
                     console.log(commentElement)
                     if (commentElement) {{
                         // Remove existing content
-                        commentElement.innerHTML = '{comment_body_en}';
+                        commentElement.innerHTML = ''; // Remove all children
+                        // Create a new span element
+                        const newSpan = document.createElement('span');
+                        // Append the new span element to the comment element
+                        commentElement.appendChild(newSpan);
+                        // Now you can further manipulate the new span element as needed
                     }}
                 }}
             """)
 
 
-            # page.wait_for_timeout(500)  # 等待5秒
+
+
+            page.wait_for_timeout(5000)  # 等待5秒
             # 截取容器元素的屏幕截图
             comment_screenshot_path = f"assets/temp/{reddit_id}/png/comment_title_{idx}.png"
             print("正在截取评论的屏幕截图...")

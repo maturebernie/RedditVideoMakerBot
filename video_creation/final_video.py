@@ -417,7 +417,7 @@ def make_final_video(
             )
 
             fontSize = 96
-            comment_body = reddit_obj['thread_title_en'] if i == 0 else reddit_obj["comments"][i - 1]["comment_body"]
+            comment_body = reddit_obj['thread_title'] if i == 0 else reddit_obj["comments"][i - 1]["comment_body"]
             max_text_width = W - 50  # 假设文字距离视频边界有一定的间距
             background_clip = background_clip.drawtext(
                 text=wrap_text(comment_body, fontSize, max_text_width),
@@ -496,15 +496,15 @@ def make_final_video(
             )
 
     text = f"Background by {background_config['video'][2]}"
-    background_clip = ffmpeg.drawtext(
-        background_clip,
-        text='老外看中国',
-        x="(w-text_w-100)",  # 将文本定位在右侧
-        y=100,  # 将文本定位在顶部
-        fontsize=100,
-        fontcolor="White",
-        fontfile=os.path.join("fonts", "A-站酷仓耳渔阳体-700-W05.ttf"),
-    )
+    # background_clip = ffmpeg.drawtext(
+    #     background_clip,
+    #     text='老外看中国',
+    #     x="(w-text_w-100)",  # 将文本定位在右侧
+    #     y=100,  # 将文本定位在顶部
+    #     fontsize=100,
+    #     fontcolor="White",
+    #     fontfile=os.path.join("fonts", "A-站酷仓耳渔阳体-700-W05.ttf"),
+    # )
 
 
     background_clip = ffmpeg.drawtext(

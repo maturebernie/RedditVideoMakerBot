@@ -34,7 +34,7 @@ def take_screenshot_ray(reddit_object):
 
         browser = p.chromium.launch(
             # '/Users/macbook/Library/Application Support/Google/Chrome',
-            headless=False
+            headless=True
         ) 
 
         context = browser.new_context(
